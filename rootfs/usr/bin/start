@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" == "backend" ]; then
+  backend --port 8000
+else
+  www --port 7000 --backend $BACKEND_SERVICE_HOST --backendPort $BACKEND_SERVICE_PORT
+fi

@@ -5,17 +5,18 @@
 package main
 
 import (
-	"io"
 	"flag"
-	"net/http"
 	"fmt"
-	"time"
-	"os"
+	"io"
 	"math/rand"
+	"net/http"
+	"os"
+	"time"
 )
 
-var fo *os.File;
-const successRate = 0.98	// Requests are 98% successful.
+var fo *os.File
+
+const successRate = 0.98 // Requests are 98% successful.
 
 func logme(w http.ResponseWriter, r *http.Request) {
 	t := time.Now().Format(time.RFC850)
@@ -37,16 +38,16 @@ func logme(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	const (
-		defaultPort = "80"
-		portUsage   = "Port to listen/serve on"
+		defaultPort    = "80"
+		portUsage      = "Port to listen/serve on"
 		defaultLogFile = "/dev/console"
-		fileUsage   = "Log file name"
+		fileUsage      = "Log file name"
 	)
 
 	var (
 		port string
 		file string
-		err error
+		err  error
 	)
 
 	flag.StringVar(&port, "port", defaultPort, portUsage)
@@ -71,5 +72,5 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	http.HandleFunc("/", logme)
-	http.ListenAndServe(":" + port, nil)
+	http.ListenAndServe(":"+port, nil)
 }
