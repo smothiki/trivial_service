@@ -11,19 +11,19 @@
 package main
 
 import (
-	"net/http"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
-	"time"
 	"sync"
+	"time"
 )
 
 var (
-	backend string
+	backend     string
 	backendPort string
-	mutex sync.Mutex
+	mutex       sync.Mutex
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -60,12 +60,12 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	const (
-		defaultPort = "80"
-		portUsage   = "Port to listen on"
+		defaultPort        = "80"
+		portUsage          = "Port to listen on"
 		defaultBackendPort = "80"
 		backendPortUsage   = "Port for backend server"
-		defaultBackend = ""
-		backendUsage   = "Name of backend server"
+		defaultBackend     = ""
+		backendUsage       = "Name of backend server"
 	)
 
 	var (
@@ -84,5 +84,5 @@ func main() {
 	fmt.Println("WWW starting on port " + port + " backend at " + backend + ":" + backendPort)
 
 	http.HandleFunc("/", hello)
-	http.ListenAndServe(":" + port, nil)
+	http.ListenAndServe(":"+port, nil)
 }

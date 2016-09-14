@@ -1,6 +1,8 @@
 #!/bin/bash
 if [ "$1" == "backend" ]; then
   backend --port 8000
-else
+elif [ "$1" == "frontend" ]; then
   www --port 7000 --backend $BACKEND_SERVICE_HOST --backendPort $BACKEND_SERVICE_PORT
+else
+  proxy --port 6000 --url "http://${FRONTEND_SERVICE_HOST}:${FRONTEND_SERVICE_PORT}"
 fi

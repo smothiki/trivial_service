@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: smothiki/quantum
+        image: smothiki/quantum:7
         ports:
         - containerPort: 7000
         command:
