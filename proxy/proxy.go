@@ -16,6 +16,7 @@ import (
 	kcl "k8s.io/kubernetes/pkg/client/unversioned"
 )
 
+//A global variable to keep track of number of requests
 var count int32
 
 // Prox is a proxy struct
@@ -28,38 +29,46 @@ type Prox struct {
 	counter chan int32
 	// clinet to configure replica sets
 	rsClient kcl.ReplicaSetInterface
+	//Mutex for locking
 	sync.Mutex
 }
 
 // New a small factory method
 func New(target string, rscli kcl.ReplicaSetInterface) *Prox {
 	url, _ := url.Parse(target)
-	// you should handle error on parsing
+	// should handle error on parsing
 	c := make(chan int32)
 	return &Prox{target: url, proxy: httputil.NewSingleHostReverseProxy(url), counter: c, rsClient: rscli}
 }
 
 func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-GoProxy", "GoProxy")
-	// call to magic method from ReverseProxy object
 	p.Lock()
 	count++
 	p.counter <- count
 	p.Unlock()
+	// call to magic method from ReverseProxy object
 	p.proxy.ServeHTTP(w, r)
 }
 
+//counterReset resets the count global variable for every 500 milliseconds
+//gets the count from handle func through counter chan and calculates the scale factor
 func (p *Prox) counterReset() {
-	tickChan := time.NewTicker(time.Millisecond * 1000).C
+	//tickerchan sends a signal for every 500 milliseconds
+	tickChanReset := time.NewTicker(time.Millisecond * 100).C
+	tickChanScale := time.NewTicker(time.Seconds * 10).C
+	var scalefactor int32
 	for {
 		select {
+		//if we receive an updated count this case gets executed and calculates scale factor
 		case m := <-p.counter:
-			var scalefactor int32
 			if m > 50 {
 				scalefactor = (m / 10)
 			} else if m <= 50 {
 				scalefactor = 5
 			}
+		// for every 100 milliseconds scales the replica set according to scale factor.
+		case <-tickChanScale:
 			fmt.Println(scalefactor)
 			rsfrontend, err := p.rsClient.Get("frontend")
 			if err != nil {
@@ -70,22 +79,25 @@ func (p *Prox) counterReset() {
 			if err != nil {
 				fmt.Println("replicaset not updated")
 			}
-		case <-tickChan:
+			// if we meet 10 Seconds everything gets reset. count to zero and scalefactor to default 5
+		case <-tickChanReset:
 			p.Lock()
 			count = 0
+			scalefactor = 5
 			p.Unlock()
 		}
 	}
 }
 
 func main() {
-	// come constants and usage helper
+	// constants and usage helper
 	const (
 		defaultPort        = "6000"
 		portUsage          = "Port to listen on"
 		defaultTargetUsage = "default redirect url, 'http://127.0.0.1:8080'"
 		defaultTarget      = "http://127.0.0.1:8080"
 	)
+	//port and url store flag values
 	var (
 		port string
 		url  string
@@ -98,17 +110,19 @@ func main() {
 
 	fmt.Printf("server will run on : %s\n", port)
 	fmt.Printf("redirecting to :%s\n", url)
-	//frontend := os.Getenv("FRONTEND_SERVICE_HOST")
+	//kubeclinet which reads default credentials mounted on each pod and talks to API
 	kubeClient, err := kcl.NewInCluster()
 	if err != nil {
 		fmt.Println("check for api auth volume mount")
 	}
+	//rsCli is replicaset clinet that gives acces to replicaset in the given Namespace
 	rsCli := kubeClient.Extensions().ReplicaSets(api.NamespaceDefault)
 	// proxy
 	proxy := &Prox{}
 	proxy = New(url, rsCli)
-	// server
+	//calling counterReset in a seprate go routine.
 	go proxy.counterReset()
+	// server
 	http.HandleFunc("/", proxy.handle)
 	http.ListenAndServe(":"+port, nil)
 }
