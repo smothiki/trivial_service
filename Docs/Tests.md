@@ -77,46 +77,46 @@ redirecting to :http://10.3.248.230:80
 3
 4
 ......
-scaling applicaiton 13
+scaling application 13
 131
-scaling applicaiton 13
+scaling application 13
 132
-scaling applicaiton 13
+scaling application 13
 133
-scaling applicaiton 13
+scaling application 13
 134
-scaling applicaiton 13
+scaling application 13
 135
-scaling applicaiton 13
+scaling application 13
 136
-scaling applicaiton 13
+scaling application 13
 2016/09/15 22:58:14 http: proxy error: EOF
 137
-scaling applicaiton 13
+scaling application 13
 2016/09/15 22:58:15 http: proxy error: EOF
 138
-scaling applicaiton 13
+scaling application 13
 139
-scaling applicaiton 13
+scaling application 13
 140
-scaling applicaiton 14
+scaling application 14
 141
-scaling applicaiton 14
+scaling application 14
 142
-scaling applicaiton 14
+scaling application 14
 143
-scaling applicaiton 14
+scaling application 14
 144
-scaling applicaiton 14
+scaling application 14
 145
-scaling applicaiton 14
+scaling application 14
 146
-scaling applicaiton 14
+scaling application 14
 147
-scaling applicaiton 14
+scaling application 14
 148
-scaling applicaiton 14
+scaling application 14
 149
-scaling applicaiton 14
+scaling application 14
 150
-scaling applicaiton 15
+scaling application 15

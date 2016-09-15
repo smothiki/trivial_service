@@ -68,7 +68,7 @@ func (p *Prox) counterReset() {
 			} else if m <= 50 {
 				scalefactor = 5
 			}
-			fmt.Printf("scaling applicaiton %d\n", scalefactor)
+			fmt.Printf("scaling application %d\n", scalefactor)
 			rsfrontend, err := p.rsClient.Get("frontend")
 			if err != nil {
 				fmt.Println("replicaset not found")
