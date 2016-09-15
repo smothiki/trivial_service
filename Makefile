@@ -48,8 +48,8 @@ docker-build: build-proxy build-www build-backend
 	docker build --rm -t quantum rootfs
 
 deploy:
-	kubectl create -f manifests/backend_service.yaml
-	kubectl create -f manifests/frontend_service.yaml
-	kubectl create -f manifest/backend_rs.yaml
+	# kubectl create -f manifests/backend_service.yaml
+	# kubectl create -f manifests/frontend_service.yaml
+	kubectl create -f manifests/backend_rs.yaml
 	kubectl create -f manifests/frontend_rs.yaml
 	kubectl create -f manifests/proxy_rs.yaml

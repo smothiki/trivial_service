@@ -55,21 +55,20 @@ func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
 //gets the count from handle func through counter chan and calculates the scale factor
 func (p *Prox) counterReset() {
 	//tickerchan sends a signal for every 500 milliseconds
-	tickChanReset := time.NewTicker(time.Millisecond * 100).C
-	tickChanScale := time.NewTicker(time.Seconds * 10).C
+	// tickChanReset := time.NewTicker(time.Millisecond * 50).C
+	tickChanScale := time.NewTicker(time.Second * 60).C
 	var scalefactor int32
 	for {
 		select {
 		//if we receive an updated count this case gets executed and calculates scale factor
 		case m := <-p.counter:
+			fmt.Println(m)
 			if m > 50 {
 				scalefactor = (m / 10)
 			} else if m <= 50 {
 				scalefactor = 5
 			}
-		// for every 100 milliseconds scales the replica set according to scale factor.
-		case <-tickChanScale:
-			fmt.Println(scalefactor)
+			fmt.Printf("scaling applicaiton %d\n", scalefactor)
 			rsfrontend, err := p.rsClient.Get("frontend")
 			if err != nil {
 				fmt.Println("replicaset not found")
@@ -79,11 +78,11 @@ func (p *Prox) counterReset() {
 			if err != nil {
 				fmt.Println("replicaset not updated")
 			}
-			// if we meet 10 Seconds everything gets reset. count to zero and scalefactor to default 5
-		case <-tickChanReset:
+		case <-tickChanScale:
 			p.Lock()
 			count = 0
 			scalefactor = 5
+			p.counter <- count
 			p.Unlock()
 		}
 	}

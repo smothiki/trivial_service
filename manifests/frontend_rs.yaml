@@ -5,7 +5,7 @@ metadata:
 spec:
   # this replicas value is default
   # modify it according to your case
-  replicas: 1
+  replicas: 5
   # selector can be applied automatically
   # from the labels in the pod template if not set,
   # but we are specifying the selector here to
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: smothiki/quantum:7
+        image: smothiki/quantum:4
         ports:
         - containerPort: 7000
         command:

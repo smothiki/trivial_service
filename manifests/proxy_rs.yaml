@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: proxy
-        image: smothiki/quantum:7
+        image: smothiki/quantum:5
         ports:
         - containerPort: 6000
         command:
