@@ -21,6 +21,8 @@ GOTEST := go test --race
 bootstrap:
 	${DEV_GLIDE_CMD} glide install
 
+glideinit:
+	${DEV_GLIDE_CMD} glide init
 glideup:
 	${DEV_GLIDE_CMD} glide up
 
